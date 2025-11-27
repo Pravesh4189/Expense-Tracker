@@ -71,15 +71,26 @@ async function startServer() {
     app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
     // If serving frontend from same repo (production)
+    // if (process.env.NODE_ENV === "production") {
+    //   const clientBuildPath = path.join(__dirname, "client", "dist"); // adjust if build output differs
+    //   app.use(express.static(clientBuildPath));
+
+    //   app.get("*", (req, res) => {
+    //     res.sendFile(path.join(clientBuildPath, "index.html"));
+    //   });
+    // }
     if (process.env.NODE_ENV === "production") {
-      const clientBuildPath = path.join(__dirname, "client", "dist"); // adjust if build output differs
+      
+      // ⚠️ UPDATE: Path ab 'frontend' -> 'expense-tracker' -> 'dist' tak jayega
+      const clientBuildPath = path.join(__dirname, "../frontend/expense-tracker/dist"); 
+
       app.use(express.static(clientBuildPath));
 
-      app.get("*", (req, res) => {
+      // Regex fix for routing
+      app.get(/^(.*)$/, (req, res) => {
         res.sendFile(path.join(clientBuildPath, "index.html"));
       });
     }
-
     // Global error handler (simple)
     // eslint-disable-next-line no-unused-vars
     app.use((err, req, res, next) => {
