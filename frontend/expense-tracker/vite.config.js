@@ -6,4 +6,12 @@ export default defineConfig({
   plugins: [react(),
        tailwindcss()
   ],
-})
+   build: {
+    outDir: "dist",
+  },
+
+  // Vercel may need this for proper routing fallback
+  server: {
+    historyApiFallback: true,
+  }
+});
