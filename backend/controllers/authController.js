@@ -21,20 +21,20 @@ exports.registerUser = async (req, res) => {
         const { name, email, password } = req.body;
 
         // Validation check for missing fields
-        if (!name || !email || !password) {
-            return res.status(400).json({ message: "All fields are required" });
-        }
+        // if (!name || !email || !password) {
+        //     return res.status(400).json({ message: "All fields are required" });
+        // }
 
         // Validate email format
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            return res.status(400).json({ message: "Invalid email format" });
-        }
+        // const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        // if (!emailRegex.test(email)) {
+        //     return res.status(400).json({ message: "Invalid email format" });
+        // }
 
         // Validate password length
-        if (password.length < 6) {
-            return res.status(400).json({ message: "Password must be at least 6 characters long" });
-        }
+        // if (password.length < 6) {
+        //     return res.status(400).json({ message: "Password must be at least 6 characters long" });
+        // }
 
         // Check if email already exists
         const existingUser = await User.findOne({ email: email.toLowerCase() });
