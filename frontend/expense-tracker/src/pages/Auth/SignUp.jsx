@@ -71,7 +71,7 @@ const SignUp = () => {
         <p className="text-xs text-slate-700 mt-[5px] mb-6">Join us Today by entering your details below.</p>
         <form onSubmit={handleSignUp}>
 
-          <ProfilePhotoSelector image={profilePic} setImage={setProfilePic} />
+          <ProfilePhotoSelector image={profilePic} setImage={setProfilePic}/>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Input value={fullName}
               onChange={({ target }) => setFullName(target.value)}
