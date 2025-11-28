@@ -5,7 +5,6 @@ import { useNavigate } from 'react-router-dom';
 import CharAvatar from '../Cards/CharAvatar';
 const SideMenu = ({activeMenu}) => {
     const {user,clearUser}=useContext(UserContext);
-    const BACKEND_URL ="https://expense-tracker-z4t6.onrender.com";
     const navigate=useNavigate();
     const handleClick=(route)=>{
         if(route==="logout")
@@ -26,13 +25,9 @@ const SideMenu = ({activeMenu}) => {
         {user?.profileImageUrl?(
             <img
         
-                src={
-      user?.profileImageUrl
-      ? (user.profileImageUrl.startsWith("http") 
-          ? user.profileImageUrl 
-          : `${BACKEND_URL}/${user.profileImageUrl.replace(/\\/g, "/")}`) // URL जोड़ रहा है
-      : "https://via.placeholder.com/150" // Default image agar link na ho
-  }
+            src={user?.profileImageUrl || ""}
+            alt="Profile Image"
+            className="w-20 h-20 bg-slate-400 rounded-full"  
                
             />):(
                 <CharAvatar
