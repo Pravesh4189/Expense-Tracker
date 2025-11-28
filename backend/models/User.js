@@ -1,43 +1,44 @@
-const mongoose=require("mongoose");
-const bcrypt=require("bcryptjs");
-const UserSchema=new mongoose.Schema(
-    {
-        fullName:{
-            type:String,
-            required:true
-        },
-        email:{
-            type:String,
-            required:true,
-            unique:true
-        },
-        password:{
-            type:String,
-            required:true
-        },
-        profileImageUrl:{
-            type:String,
-            default:null
-        },
-    },
-    {timestamps:true}
-);
+const mongoose = require("mongoose");
+const bcrypt = require("bcryptjs");
 
-//hash password before save
+// User Schema
+const UserSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+    trim: true
+  },
+
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true
+  },
+
+  password: {
+    type: String,
+    required: true,
+    minlength: 6
+  }
+}, { timestamps: true });
+
+// Hash password before save
 UserSchema.pre("save", async function (next) {
-    if (!this.isModified("password")) return next(); try { const salt = await bcrypt.genSalt(10); this.password = await bcrypt.hash(this.password, salt); next(); } catch (error) {
-        next(error);
-    }
+  if (!this.isModified("password")) return next();
+
+  try {
+    const salt = await bcrypt.genSalt(10);
+    this.password = await bcrypt.hash(this.password, salt);
+    next();
+  } catch (error) {
+    next(error); // Stops save if hashing fails
+  }
 });
 
-
-
-
-
-
-//compare passowrds
-UserSchema.methods.comparePassword=async function(candidatePassword)
-{
-    return await bcrypt.compare(candidatePassword, this.password);
+// Compare passwords
+UserSchema.methods.comparePassword = async function (candidatePassword) {
+  return await bcrypt.compare(candidatePassword, this.password);
 };
-module.exports=mongoose.model("User",UserSchema);
+
+module.exports = mongoose.model("User", UserSchema);
