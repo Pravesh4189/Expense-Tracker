@@ -30,26 +30,30 @@ const limiter = rateLimit({
 app.use(limiter);
 
 // CORS
-const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173"; // fallback
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // allow requests with no origin (like Postman or server-to-server)
-      if (!origin) return callback(null, true);
+// const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:5173"; // fallback
+// app.use(
+//   cors({
+//     origin: (origin, callback) => {
+//       // allow requests with no origin (like Postman or server-to-server)
+//       if (!origin) return callback(null, true);
 
-      // If you want to support multiple origins, make CLIENT_URL comma-separated or use an array
-      if (origin === CLIENT_URL) return callback(null, true);
+//       // If you want to support multiple origins, make CLIENT_URL comma-separated or use an array
+//       if (origin === CLIENT_URL) return callback(null, true);
 
-      return callback(
-        new Error("CORS policy: This origin is not allowed."),
-        false
-      );
-    },
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-    credentials: true, // allow cookies if you use them
-  })
-);
+//       return callback(
+//         new Error("CORS policy: This origin is not allowed."),
+//         false
+//       );
+//     },
+//     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+//     allowedHeaders: ["Content-Type", "Authorization"],
+//     credentials: true, // allow cookies if you use them
+//   })
+// );
+app.use(cors({
+  origin: true, 
+  credentials: true 
+}));
 
 // Body parsers
 app.use(express.json());
