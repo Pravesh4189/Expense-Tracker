@@ -1,6 +1,6 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import AuthLayout from '../../components/layouts/AuthLayout'
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom'; // Import useLocation
 import Input from '../../components/Inputs/Input';
 import { validateEmail } from '../../utils/helper';
 import axiosInstance from '../../utils/axiosInstance';
@@ -8,50 +8,60 @@ import { API_PATHS } from '../../utils/apiPaths';
 import { UserContext } from '../../context/UserContext';
 
 const Login = () => {
-  const [email,setEmail]=useState("");
-  const [password,setPassword]=useState("");
-  const [error,setError]=useState(null);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(null); // New state for success message
 
-  const {updateUser} =useContext(UserContext);
+  const { updateUser } = useContext(UserContext);
 
-  const navigate=useNavigate();
+  const navigate = useNavigate();
+  const location = useLocation(); // Initialize useLocation hook
+
+  // Use useEffect to check for a success message passed from the SignUp page
+  useEffect(() => {
+    if (location.state && location.state.message) {
+      setSuccessMessage(location.state.message);
+      // Clean up the state so the message doesn't persist on future navigation/refresh
+      // This is optional, but generally a good practice for transient messages
+      navigate(location.pathname, { replace: true, state: {} });
+    }
+  }, [location, navigate]); // Depend on location and navigate
+
   //Handle Login Form Submit
-  const handleLogin=async(e)=>{
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if(!validateEmail(email)){
+    setSuccessMessage(null); // Clear success message on new login attempt
+
+    if (!validateEmail(email)) {
       setError("Please Enter a valid email address.");
       return;
     }
-    if(!password)
-    {
+    if (!password) {
       setError("Please enter the password");
       return;
     }
     setError("");
 
     //Login API Call
-      try{
-      const response=await axiosInstance.post(API_PATHS.AUTH.LOGIN,{
+    try {
+      const response = await axiosInstance.post(API_PATHS.AUTH.LOGIN, {
         email,
         password,
       });
-      const {token,user}=response.data;
+      const { token, user } = response.data;
 
-      if(token)
-      {
-        localStorage.setItem("token",token);
+      if (token) {
+        localStorage.setItem("token", token);
         updateUser(user);
         navigate("/dashboard");
       }
     }
-    catch(error)
-    {
-      if(error.response && error.response.data.message)
-      {
+    catch (error) {
+      if (error.response && error.response.data.message) {
         setError(error.response.data.message);
       }
-      else
-      {
+      else {
         setError("Something went wrong.Please try again.");
       }
     }
@@ -59,38 +69,45 @@ const Login = () => {
   return (
     <AuthLayout>
       <div className="lg:w-[70%] h-3/4 md:h-full flex flex-col justify-center">
-      <h3 className="text-xl font-semibold text-black">Welcome Back</h3>
-      <p className="text-xs text-slate-700 mt-[5px] mb-6">
-        Please enter your details to log in
-      </p>
-      <form onSubmit={handleLogin}>
-        <Input value={email}
-        onChange={({target})=>setEmail(target.value)}
-        label="Email Address"
-        placeholder="Pravesh@example.com"
-        type="text"/> 
-
-        <Input value={password}
-        onChange={({target})=>setPassword(target.value)}
-        label="Password"
-        placeholder="Min 8 Characters"
-        type="password"
-        />
-
-        {error && <p className="text-red-500 text-xs pb-2.5">{error}</p>}
-        <button type="submit" className="btn-primary">
-          Login
-        </button>
-        <p className="text-[13px] text-slate-800 mt-3">
-          Don't have an account?{" "}
-          <Link className="font-medium text-primary underline" to="/signup">
-          SignUp
-          </Link>
+        <h3 className="text-xl font-semibold text-black">Welcome Back</h3>
+        <p className="text-xs text-slate-700 mt-[5px] mb-6">
+          Please enter your details to log in
         </p>
-      </form>
+        {/* Display Success Message */}
+        {successMessage && (
+          <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+            <span className="block sm:inline">{successMessage}</span>
+          </div>
+        )}
+
+        <form onSubmit={handleLogin}>
+          <Input value={email}
+            onChange={({ target }) => setEmail(target.value)}
+            label="Email Address"
+            placeholder="Pravesh@example.com"
+            type="text" />
+
+          <Input value={password}
+            onChange={({ target }) => setPassword(target.value)}
+            label="Password"
+            placeholder="Min 8 Characters"
+            type="password"
+          />
+
+          {error && <p className="text-red-500 text-xs pb-2.5">{error}</p>}
+          <button type="submit" className="btn-primary">
+            Login
+          </button>
+          <p className="text-[13px] text-slate-800 mt-3">
+            Don't have an account?{" "}
+            <Link className="font-medium text-primary underline" to="/signup">
+              SignUp
+            </Link>
+          </p>
+        </form>
       </div>
     </AuthLayout>
   );
 };
- 
-export default Login
+
+export default Login;

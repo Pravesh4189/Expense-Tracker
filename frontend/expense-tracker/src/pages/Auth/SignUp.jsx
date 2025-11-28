@@ -15,8 +15,10 @@ const SignUp = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState(null);
-  const { updateUser } = useContext(UserContext);
+
+  // const { updateUser } = useContext(UserContext);
   const navigate = useNavigate();
+
   //handle SignUp form Submit
   const handleSignUp = async (e) => {
     e.preventDefault();
@@ -43,7 +45,7 @@ const SignUp = () => {
         profileImageUrl = imgUploadRes.imageUrl || "";
       }
 
-      // FIX: Mapping 'fullName' state to backend-expected key 'name'
+      // API call, sending 'fullName' under the 'name' key
       const response = await axiosInstance.post(API_PATHS.AUTH.REGISTER, {
         name: fullName,
         email,
@@ -51,12 +53,13 @@ const SignUp = () => {
         profileImageUrl
       });
 
-      const { token, user } = response.data;
-      if (token) {
-        localStorage.setItem("token", token);
-        updateUser(user);
-        navigate("/dashboard");
+      // After successful registration, redirect to login page with a success message
+      if (response.data.success) {
+        navigate("/login", {
+          state: { message: "Account created successfully! Please log in." }
+        });
       }
+
     }
     catch (error) {
       if (error.response && error.response.data.message) {
