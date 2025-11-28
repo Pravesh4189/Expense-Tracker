@@ -20,7 +20,9 @@ if (process.env.NODE_ENV === "production") {
 }
 
 // Basic security headers
-app.use(helmet());
+app.use(helmet(
+  {crossOriginResourcePolicy: false,}
+));
 
 // Rate limiting (tune values as needed)
 const limiter = rateLimit({
