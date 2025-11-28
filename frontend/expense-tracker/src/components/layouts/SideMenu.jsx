@@ -6,7 +6,6 @@ import CharAvatar from '../Cards/CharAvatar';
 const SideMenu = ({activeMenu}) => {
     const {user,clearUser}=useContext(UserContext);
     const navigate=useNavigate();
-    const BACKEND_URL = "https://expense-tracker-z4t6.onrender.com";
     const handleClick=(route)=>{
         if(route==="logout")
         {
@@ -25,14 +24,10 @@ const SideMenu = ({activeMenu}) => {
     <div className="flex flex-col items-center justify-center gap-3 mt-3 mb-7">
         {user?.profileImageUrl?(
             <img
-            {/* src={user?.profileImageUrl || ""}
+            src={user?.profileImageUrl || ""}
             alt="Profile Image"
-            className="w-20 h-20 bg-slate-400 rounded-full" */}
-                src={
-                            user.profileImageUrl.startsWith("http") 
-                            ? user.profileImageUrl 
-                            : `${BACKEND_URL}/${user.profileImageUrl}`
-                        }
+            className="w-20 h-20 bg-slate-400 rounded-full" 
+               
             />):(
                 <CharAvatar
                 fullName={user?.fullName}
